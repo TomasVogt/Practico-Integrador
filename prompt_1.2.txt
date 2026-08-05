@@ -1,0 +1,36 @@
+Necesito que generes un script SQL de inserción de datos para la base de datos `PEDIDOS` que hice.
+
+ESQUEMA Y TABLAS DESTINO
+1. Clientes (idcliente [PK AUTO_INCREMENT], apellido, nombres, direccion, mail [UNIQUE])
+2. Proveedores (idproveedor [PK AUTO_INCREMENT], nombre_proveedor, direccion, mail [UNIQUE])
+3. Vendedor (idvendedor [PK AUTO_INCREMENT], apellido, nombres, mail [UNIQUE], comision [0 a 100])
+4. Productos (idproducto [PK AUTO_INCREMENT], descripcion, precio_unitario, stock, stock_max, stock_min, idproveedor [FK], origen ['Nacional'|'Importado'])
+5. Pedidos (numero_pedido [PK AUTO_INCREMENT], idcliente [FK], idvendedor [FK], fecha [DATETIME], estado ['CONFIRMADO'|'ANULADO'|'PENDIENTE'])
+6. Detalle_Pedidos (numero_pedido [FK], renglon, idproducto [FK], cantidad, precio_unitario) -> PK Compuesta: (numero_pedido, renglon). Nota: La columna `total` es un campo GENERATED STORED, por lo que NO debes incluirla en los INSERTs de esta tabla.
+
+REGLAS
+1. Proveedores: Generar 10 registros con nombres de empresas de tecnología
+2. Vendedores: Generar 10 registros con nombres realistas, mails únicos y comisiones entre 5.00 y 20.00.
+3. Clientes: Generar  50 registros con nombres/apellidos direcciones y mails únicos.
+4. Productos: Generar  100 productos de tecnología (laptops, componentes, monitores, periféricos) que cumplan:
+   - Precios unitarios entre $5.000 y $1.500.000 ARS.
+   - un equilibrio entre origen 'Nacional' e 'Importado'.
+   - Asignación de idproveedor válido (valores del 1 al 10).
+   - Cumplimiento estricto de la regla: stock_min < stock < stock_max (ej. stock_min = 5, stock = 25, stock_max = 50).
+5. Pedidos: Generar  200 pedidos que cumplan:
+   - Fechas distribuidas aleatoriamente a lo largo de los últimos 12 meses.
+   - Asignación válida de idcliente (1 a 50) e idvendedor (1 a 10).
+   - Estados variados ('CONFIRMADO', 'ANULADO', 'PENDIENTE').
+6. Detalle_Pedidos:
+   - Para cada uno de los 200 pedidos generados, incluir entre 1 y 4 renglones por pedido (renglon 1, 2, 3, 4).
+   - idproducto aleatorio (1 a 100).
+   - cantidad mayor a 0 (ej. entre 1 y 5 unidades).
+   - precio_unitario que coincida de forma coherente con el precio del producto al momento de la venta.
+
+RESTRICCIONES 
+- Utiliza sintaxis `INSERT INTO` en bloques (multi-row inserts) para optimizar el rendimiento de la ejecución.
+- Envuelve todo el script entre `START TRANSACTION;` y `COMMIT;`.
+- Incluye `USE PEDIDOS;` al inicio del script.
+- Asegúrate de insertar los datos guardando el orden de dependencia de claves foráneas (Proveedores/Vendedores/Clientes -> Productos -> Pedidos -> Detalle_Pedidos).
+
+Proporciona únicamente el código SQL ejecutable sin explicaciones innecesarias.

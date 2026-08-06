@@ -976,3 +976,13 @@ INSERT INTO detallePedidos (numero_pedido, renglon, id_producto, cantidad, preci
 (200, 2, 70, 4, 1459811.23);
 
 COMMIT;
+
+-- Verificacion de integridad de datos, en este caso la hago manual,
+-- se podrian hacer consultas mas complejas pero a simple vista se cumplen las indicaciones
+
+SELECT * FROM Clientes;
+SELECT * FROM Proveedores;
+SELECT * FROM Vendedor;
+SELECT * FROM Productos;
+SELECT * FROM Pedidos;
+SELECT * FROM detallePedidos;

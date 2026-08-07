@@ -3,6 +3,7 @@
 para que respete las restricciones y los atributos requeridos.
 */
 
+
 -- 1.2 Tomas Vogt
 
 USE PEDIDOS;

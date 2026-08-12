@@ -62,7 +62,7 @@ CREATE TABLE Pedidos (
     CONSTRAINT fk_pedidos_vendedores 
         FOREIGN KEY (id_vendedor) REFERENCES Vendedor(id_vendedor) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT chk_pedidos_estado CHECK(estado IN('CONFIRMADO', 'ANULADO', 'PENDIENTE'))
-);
+)
 
 CREATE TABLE detallePedidos (
     numero_pedido INT NOT NULL,

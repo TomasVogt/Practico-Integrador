@@ -14,7 +14,7 @@ INNER JOIN Pedidos p on p.id_cliente = c.id_cliente;
 
 -- Ejemplo de uso con lo que se pide en la consgina
 
-SELECT idcliente, apellido, nombres, mail, fecha
+SELECT id_cliente, apellido, nombres, mail, fecha
 FROM vw_clientes_activos 
 WHERE fecha BETWEEN '2025-01-01' AND CURDATE();
 

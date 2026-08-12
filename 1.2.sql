@@ -8,6 +8,16 @@ para que respete las restricciones y los atributos requeridos.
 
 USE PEDIDOS;
 
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE detallePedidos;
+TRUNCATE TABLE Pedidos;
+TRUNCATE TABLE Productos;
+TRUNCATE TABLE Clientes;
+TRUNCATE TABLE Vendedor;
+TRUNCATE TABLE Proveedores;
+SET FOREIGN_KEY_CHECKS = 1;
+
+
 START TRANSACTION;
 
 -- =============================================

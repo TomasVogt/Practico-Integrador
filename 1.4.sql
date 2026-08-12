@@ -1,6 +1,13 @@
 USE PEDIDOS;
 
 -- 1.4 Tomas Vogt
+    
+DROP USER IF EXISTS 'usuario_auditoria'@'localhost';
+DROP USER IF EXISTS 'usuario_ventas1'@'localhost';
+DROP USER IF EXISTS 'usuario_admin1'@'localhost';
+DROP ROLE IF EXISTS 'rol_auditor'
+DROP ROLE IF EXISTS 'rol_vendedor'
+DROP ROLE IF EXISTS 'rol_admin'
 
 -- 1)
 CREATE ROLE 'rol_auditor';

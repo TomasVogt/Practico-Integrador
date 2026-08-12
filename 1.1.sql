@@ -48,7 +48,7 @@ CREATE TABLE Productos (
     CONSTRAINT chk_producto_origen CHECK(origen = 'Nacional' or origen = 'Importado'),
     CONSTRAINT chk_producto_precio CHECK(precio_unitario >= 0),
     CONSTRAINT chk_producto_stock CHECK(stock >= 0 AND stock_min >= 0 AND stock_max >= 0),
-    CONSTRAINT chk_producto_stock_valores CHECK(stock_min < stock < stock_max)
+    CONSTRAINT chk_producto_stock_valores CHECK (stock > stock_min AND stock < stock_max)
 );
 
 CREATE TABLE Pedidos (
@@ -62,7 +62,7 @@ CREATE TABLE Pedidos (
     CONSTRAINT fk_pedidos_vendedores 
         FOREIGN KEY (id_vendedor) REFERENCES Vendedor(id_vendedor) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT chk_pedidos_estado CHECK(estado IN('CONFIRMADO', 'ANULADO', 'PENDIENTE'))
-)
+);
 
 CREATE TABLE detallePedidos (
     numero_pedido INT NOT NULL,

@@ -102,5 +102,13 @@ ORDER BY total_vendido DESC;
                     -> Single-row index lookup on pe using PRIMARY (numero_pedido = dp.numero_pedido)  (cost=0.25 rows=1) (actual time=0.00291..0.00301 rows=1 loops=285)
 
 
+Conclusión:
+    La creación del índice compuesto idx_productos_origen_id (origen, idproductos) resolvió con 
+    éxito el cuello de botella más grave de la consulta: el Full Table Scan sobre la tabla Productos.
 
+    Al contar con un índice indexado por la columna de filtro (origen), el optimizador de MySQL redujo a la mitad 
+    las filas leídas en la primera etapa del pipeline de procesamiento, 
+    disminuyendo la carga de I/O en disco/memoria y garantizando un plan de ejecución mucho más escalable 
+    a medida que la tabla de productos crezca.
 */
+

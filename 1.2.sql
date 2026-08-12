@@ -21,37 +21,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 START TRANSACTION;
 
 -- =============================================
--- 1. INSERCIÓN DE PROVEEDORES (10 registros)
--- =============================================
-INSERT INTO Proveedores (nombre_proveedor, direccion, mail) VALUES
-('TechSource S.A.', 'Av. Colón 123', 'contacto@techsourcesa.com'),
-('Global Logistics & Tech', 'Calle San Martín 456', 'contacto@globallogistics&tech.com'),
-('Importadora Conecta', 'Av. Vélez Sarsfield 789', 'contacto@importadoraconecta.com'),
-('Silicon Supplies', 'Av. General Paz 1011', 'contacto@siliconsupplies.com'),
-('Sistemas y Hardware SRL', 'Calle Belgrano 234', 'contacto@sistemasyhardwaresrl.com'),
-('Distribuidora Digital', 'Calle Jujuy 567', 'contacto@distribuidoradigital.com'),
-('DataCom Argentina', 'Av. Olmos 890', 'contacto@datacomargentina.com'),
-('ElectroTech Imports', 'Calle Dean Funes 123', 'contacto@electrotechimports.com'),
-('MicroBits Distribuidora', 'Calle Rondeau 456', 'contacto@microbitsdistribuidora.com'),
-('Innovación Tecnológica SA', 'Calle Chacabuco 789', 'contacto@innovaciontecnologicasa.com');
-
--- =============================================
--- 2. INSERCIÓN DE VENDEDORES (10 registros)
--- =============================================
-INSERT INTO Vendedor (apellido, nombres, mail, comision) VALUES
-('González', 'Juan', 'juan.gonzalez1@empresa.com', 14.59),
-('Rodríguez', 'María', 'maria.rodriguez2@empresa.com', 5.38),
-('Gómez', 'Carlos', 'carlos.gomez3@empresa.com', 9.12),
-('Fernández', 'Ana', 'ana.fernandez4@empresa.com', 16.05),
-('López', 'Luis', 'luis.lopez5@empresa.com', 12.01),
-('Díaz', 'Laura', 'laura.diaz6@empresa.com', 6.03),
-('Martínez', 'Diego', 'diego.martinez7@empresa.com', 18.38),
-('Pérez', 'Sofia', 'sofia.perez8@empresa.com', 7.50),
-('Romero', 'Gabriel', 'gabriel.romero9@empresa.com', 11.23),
-('Sánchez', 'Lucía', 'lucia.sanchez10@empresa.com', 8.64);
-
--- =============================================
--- 3. INSERCIÓN DE CLIENTES (50 registros)
+-- 1. INSERCIÓN DE CLIENTES (50 registros)
 -- =============================================
 INSERT INTO Clientes (apellido, nombres, direccion, mail) VALUES
 ('Medina', 'Valentina', 'Calle Córdoba 707 3375', 'valentina.medina1@mail.com'),
@@ -104,6 +74,37 @@ INSERT INTO Clientes (apellido, nombres, direccion, mail) VALUES
 ('Acosta', 'Paula', 'Calle Salta 808 6496', 'paula.acosta48@mail.com'),
 ('González', 'Victoria', 'Calle Italia 202 4683', 'victoria.gonzalez49@mail.com'),
 ('Flores', 'Federico', 'Calle Salta 808 6689', 'federico.flores50@mail.com');
+
+
+-- =============================================
+-- 2. INSERCIÓN DE PROVEEDORES (10 registros)
+-- =============================================
+INSERT INTO Proveedores (nombre_proveedor, direccion, mail) VALUES
+('TechSource S.A.', 'Av. Colón 123', 'contacto@techsourcesa.com'),
+('Global Logistics & Tech', 'Calle San Martín 456', 'contacto@globallogistics&tech.com'),
+('Importadora Conecta', 'Av. Vélez Sarsfield 789', 'contacto@importadoraconecta.com'),
+('Silicon Supplies', 'Av. General Paz 1011', 'contacto@siliconsupplies.com'),
+('Sistemas y Hardware SRL', 'Calle Belgrano 234', 'contacto@sistemasyhardwaresrl.com'),
+('Distribuidora Digital', 'Calle Jujuy 567', 'contacto@distribuidoradigital.com'),
+('DataCom Argentina', 'Av. Olmos 890', 'contacto@datacomargentina.com'),
+('ElectroTech Imports', 'Calle Dean Funes 123', 'contacto@electrotechimports.com'),
+('MicroBits Distribuidora', 'Calle Rondeau 456', 'contacto@microbitsdistribuidora.com'),
+('Innovación Tecnológica SA', 'Calle Chacabuco 789', 'contacto@innovaciontecnologicasa.com');
+
+-- =============================================
+-- 3. INSERCIÓN DE VENDEDORES (10 registros)
+-- =============================================
+INSERT INTO Vendedor (apellido, nombres, mail, comision) VALUES
+('González', 'Juan', 'juan.gonzalez1@empresa.com', 14.59),
+('Rodríguez', 'María', 'maria.rodriguez2@empresa.com', 5.38),
+('Gómez', 'Carlos', 'carlos.gomez3@empresa.com', 9.12),
+('Fernández', 'Ana', 'ana.fernandez4@empresa.com', 16.05),
+('López', 'Luis', 'luis.lopez5@empresa.com', 12.01),
+('Díaz', 'Laura', 'laura.diaz6@empresa.com', 6.03),
+('Martínez', 'Diego', 'diego.martinez7@empresa.com', 18.38),
+('Pérez', 'Sofia', 'sofia.perez8@empresa.com', 7.50),
+('Romero', 'Gabriel', 'gabriel.romero9@empresa.com', 11.23),
+('Sánchez', 'Lucía', 'lucia.sanchez10@empresa.com', 8.64);
 
 -- =============================================
 -- 4. INSERCIÓN DE PRODUCTOS (100 registros)

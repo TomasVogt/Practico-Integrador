@@ -41,7 +41,7 @@ SELECT
     SUM(dp.cantidad * dp.precio_unitario) as importe_total
 FROM Pedidos p
 INNER JOIN detallePedidos dp on dp.numero_pedido = p.numero_pedido
-GROUP BY p.numero_pedido, p.id_cliente ,p.id_vendedor ,p.fecha ,p.estado
+GROUP BY p.numero_pedido, p.id_cliente ,p.id_vendedor, p.fecha, p.estado
 HAVING importe_total > 500000;
 
 CREATE OR REPLACE VIEW vw_productos_vendidos_periodo AS 

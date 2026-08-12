@@ -6,7 +6,7 @@ USE PEDIDOS;
 START TRANSACTION;
 
 INSERT INTO Pedidos (id_cliente, id_vendedor, fecha, estado)
-VALUES (1, 1, NOW(), 'CONFIRMADO');
+VALUES (1, 1, CURDATE(), 'CONFIRMADO');
 
 SET @id_nuevo_pedido = LAST_INSERT_ID();
 

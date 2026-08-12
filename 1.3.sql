@@ -38,7 +38,7 @@ SELECT
     p.id_vendedor,
     p.fecha,
     p.estado,
-    SUM(precio_unitario) as importe_total
+    SUM(dp.cantidad * dp.precio_unitario) as importe_total
 FROM Pedidos p
 INNER JOIN detallePedidos dp on dp.numero_pedido = p.numero_pedido
 GROUP BY p.numero_pedido, p.id_cliente ,p.id_vendedor ,p.fecha ,p.estado
@@ -70,7 +70,7 @@ WHERE c.id_cliente NOT IN(
         WHERE p2.estado IN("CONFIRMADO", "PENDIENTE")
 );
 
-CREATE OR REPLACE VIEW vw_clientes_ocacionales AS 
+CREATE OR REPLACE VIEW vw_clientes_ocasionales AS 
 SELECT 
     c.id_cliente,
     CONCAT(c.nombres, " ", c.apellido) as nombre_cliente,

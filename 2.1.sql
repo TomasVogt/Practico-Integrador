@@ -24,6 +24,8 @@ BEGIN
     RETURN v_total;
 END//
 
+-- Ejemplo de uso: 
+-- select numero_pedido, fn_calcular_total_pedido(numero_pedido) from detalle_pedidos;
 
 -- 2)
 

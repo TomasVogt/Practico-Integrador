@@ -76,6 +76,8 @@ END//
 
 -- 2)
 
+-- desacoplar logica del calculo en una funcion (en caso de querer tambien decrementar), seria solucion ideal.
+
 CREATE PROCEDURE sp_actualizar_precios_por_origen(
     IN p_origen VARCHAR(20),
     IN p_porcentaje_incremento DECIMAL(5,2)

@@ -78,6 +78,6 @@ SELECT
     c.mail,
     COUNT(p.numero_pedido) as cantidad_total_pedidos
 FROM Clientes c
-INNER JOIN Pedidos p on p.id_cliente = c.id_cliente
+LEFT JOIN Pedidos p on p.id_cliente = c.id_cliente
 GROUP BY c.id_cliente, c.nombres, c.apellido, c.direccion, c.mail
 HAVING cantidad_total_pedidos < 2;

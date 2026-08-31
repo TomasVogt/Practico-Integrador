@@ -70,6 +70,7 @@ CREATE TABLE detallePedidos (
     id_producto INT NOT NULL,
     cantidad INT NOT NULL,
     precio_unitario DECIMAL(12,2) NOT NULL,
+    total DECIMAL(12,2) GENERATED ALWAYS AS (cantidad * precio_unitario) STORED
 
     PRIMARY KEY(numero_pedido, renglon),
     CONSTRAINT fk_detalle_pedido FOREIGN KEY (numero_pedido) REFERENCES Pedidos(numero_pedido) ON DELETE RESTRICT ON UPDATE CASCADE,

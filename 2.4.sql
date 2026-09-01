@@ -36,13 +36,11 @@ BEGIN
     DECLARE v_stock_max INT;
     DECLARE v_cantidad_reponer INT;
 
-    -- Cursor sobre los productos en nivel crítico
     DECLARE cur_stock_critico CURSOR FOR
         SELECT id_producto, descripcion, stock, stock_min, stock_max
         FROM Productos
         WHERE stock < stock_min;
 
-    -- Manejador de fin de cursor
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin_cursor = 1;
 
     OPEN cur_stock_critico;
@@ -67,25 +65,3 @@ END//
 
 DELIMITER ;
 
--- =============================================
--- Pruebas de uso
--- =============================================
-
--- Ejecutar el procedimiento
-CALL sp_procesar_reajuste_stock_critico();
-
--- Ver las órdenes generadas (esperable: vacío mientras la constraint
--- chk_producto_stock_valores de 1.1.sql impida stock < stock_min)
-SELECT * FROM Ordenes_Compra_Sugeridas;
-
--- Para forzar un caso de prueba y validar que el cursor funciona,
--- se puede bajar temporalmente el stock de un producto por debajo de
--- su stock_min (esto requiere desactivar momentáneamente la constraint,
--- ya que 1.1.sql la definió como estricta). Ejemplo, NO ejecutar en
--- producción, solo como prueba puntual:
---
--- ALTER TABLE Productos DROP CHECK chk_producto_stock_valores;
--- UPDATE Productos SET stock = 2 WHERE id_producto = 1; -- stock_min de este producto es mayor a 2
--- CALL sp_procesar_reajuste_stock_critico();
--- SELECT * FROM Ordenes_Compra_Sugeridas;
--- ALTER TABLE Productos ADD CONSTRAINT chk_producto_stock_valores CHECK (stock > stock_min AND stock < stock_max);

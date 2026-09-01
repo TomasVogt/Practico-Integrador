@@ -1,0 +1,137 @@
+============================================================
+INFORME - ANÁLISIS DE PLANES DE EJECUCIÓN
+Optimización mediante índices compuestos - Base de datos PEDIDOS
+Tomás Vogt - BDA - Consigna 1.5
+============================================================
+ 
+CONSULTA ANALIZADA
+------------------------------------------------------------
+SELECT p.descripcion, SUM(dp.cantidad) AS total_vendido
+FROM Productos p
+JOIN detallePedidos dp ON p.id_producto = dp.id_producto
+JOIN Pedidos pe ON dp.numero_pedido = pe.numero_pedido
+WHERE pe.fecha BETWEEN '2024-01-01' AND '2026-06-30'
+  AND p.origen = 'Importado'
+GROUP BY p.descripcion
+ORDER BY total_vendido DESC;
+ 
+ÍNDICES CREADOS
+------------------------------------------------------------
+CREATE INDEX idx_productos_origen_id ON Productos(origen, id_producto);
+CREATE INDEX idx_pedidos_fecha_numero ON Pedidos(fecha, numero_pedido);
+ 
+ 
+============================================================
+1) PLAN DE EJECUCIÓN - ANTES DE LOS ÍNDICES
+============================================================
+ 
+-> Sort: total_vendido DESC  (actual time=4.23..4.25 rows=48 loops=1)
+    -> Table scan on <temporary>  (actual time=4.12..4.15 rows=48 loops=1)
+        -> Aggregate using temporary table  (actual time=4.12..4.12 rows=48 loops=1)
+            -> Nested loop inner join  (cost=50 rows=6.31) (actual time=0.104..3.3 rows=255 loops=1)
+                -> Nested loop inner join  (cost=30.1 rows=56.8) (actual time=0.0878..1.51 rows=285 loops=1)
+                    -> Filter: (p.origen = 'Importado')  (cost=10.2 rows=10) (actual time=0.0414..0.198 rows=50 loops=1)
+                        -> Table scan on p  (cost=10.2 rows=100) (actual time=0.0367..0.141 rows=100 loops=1)
+                    -> Index lookup on dp using fk_detallePedido_productos (id_producto = p.id_producto)  (cost=1.48 rows=5.68) (actual time=0.0185..0.0247 rows=5.7 loops=50)
+                -> Filter: (pe.fecha between '2024-01-01' and '2026-06-30')  (cost=0.25 rows=0.111) (actual time=0.00548..0.00576 rows=0.895 loops=285)
+                    -> Single-row index lookup on pe using PRIMARY (numero_pedido = dp.numero_pedido)  (cost=0.25 rows=1) (actual time=0.0032..0.00331 rows=1 loops=285)
+ 
+--- Análisis ---
+ 
+Tipos de acceso:
+  - Table scan on p (Productos)              -> tipo ALL. o sea lee las 100 filas
+    completas de la tabla porque no existe índice sobre "origen". Es el
+    problema principal del plan.
+  - Index lookup on dp (fk_detallePedido_productos) -> tipo ref. Acceso
+    eficiente, usa la FK existente.
+  - Single-row index lookup on pe (PRIMARY)   -> tipo eq_ref. Acceso
+    eficiente por clave primaria, pero se repite 285 veces (loops=285)
+    porque el filtro de fecha recién se aplica DESPUÉS de llegar a cada fila.
+ 
+Filas examinadas:
+  - Table scan on p: rows=100 (estimado = real). Se leyó la tabla entera
+    para descartar después, con el Filter de origen, la mitad de las filas
+    (de 100 leídas solo 50 se aprovechan).
+  - loops=285 en el acceso a Pedidos por PRIMARY: se hicieron 285 búsquedas
+    por clave primaria para recién ahí, con el Filter de fecha, descartar
+    las filas fuera del rango.
+ 
+Operaciones costosas (Extra):
+  - Aggregate using temporary table: necesaria para resolver el
+    GROUP BY p.descripcion, no hay índice que ya venga ordenado por esa
+    columna.
+  - Sort: total_vendido DESC (filesort): necesario porque se ordena por un
+    valor calculado (SUM), que no existe hasta que se agrega.
+ 
+ 
+============================================================
+2) PLAN DE EJECUCIÓN - DESPUÉS DE LOS ÍNDICES
+============================================================
+ 
+-> Sort: total_vendido DESC  (actual time=4.03..4.04 rows=48 loops=1)
+    -> Table scan on <temporary>  (actual time=3.92..3.93 rows=48 loops=1)
+        -> Aggregate using temporary table  (actual time=3.91..3.91 rows=48 loops=1)
+            -> Nested loop inner join  (cost=205 rows=257) (actual time=0.0902..3.15 rows=255 loops=1)
+                -> Nested loop inner join  (cost=105 rows=284) (actual time=0.0755..1.48 rows=285 loops=1)
+                    -> Index lookup on p using idx_productos_origen_id (origen = 'Importado')  (cost=5.75 rows=50) (actual time=0.0392..0.208 rows=50 loops=1)
+                    -> Index lookup on dp using fk_detallePedido_productos (id_producto = p.id_producto)  (cost=1.43 rows=5.68) (actual time=0.0183..0.0241 rows=5.7 loops=50)
+                -> Filter: (pe.fecha between '2024-01-01' and '2026-06-30')  (cost=0.25 rows=0.904) (actual time=0.00492..0.00542 rows=0.895 loops=285)
+                    -> Single-row index lookup on pe using PRIMARY (numero_pedido = dp.numero_pedido)  (cost=0.25 rows=1) (actual time=0.00291..0.00301 rows=1 loops=285)
+ 
+--- Análisis ---
+ 
+Tipos de acceso:
+  - Table scan on p DESAPARECE del plan. Es reemplazado por:
+    Index lookup on p using idx_productos_origen_id -> tipo ref.
+    El acceso pasa de ALL (barrido completo) a ref (búsqueda indexada).
+  - El resto de los accesos (dp por FK, pe por PRIMARY) se mantiene igual
+    que antes, porque ya eran eficientes.
+ 
+Filas examinadas:
+  - Productos: pasa de leer 100 filas a leer directamente 50 (exactamente
+    las que cumplen origen = 'Importado'), sin necesidad de descartar
+    después. Reducción del 50%.
+  - El loops=285 sobre Pedidos se mantiene igual: ese patrón depende de
+    cuántas filas de detallePedidos llegan a esa etapa del join, no de la
+    falta de índice en Productos.
+ 
+Operaciones costosas (Extra) - SIN CAMBIOS, y es esperable:
+  - Aggregate using temporary table y Sort (filesort) siguen presentes,
+    con tiempos casi idénticos a los del plan original. Ningún índice
+    sobre origen/id_producto/fecha puede eliminar esto, porque
+    total_vendido es un SUM() calculado en tiempo de ejecución: no existe
+    una estructura de índice que pueda "pre-ordenar" un valor que todavía
+    no existe antes de agregarse. Los índices creados atacan solo la
+    etapa de filtrado y join, que es donde realmente había una
+    ineficiencia corregible.
+ 
+ 
+============================================================
+3) COMPARACIÓN RESUMIDA
+============================================================
+ 
+Métrica                           | Antes             | Después
+----------------------------------|-------------------|------------------
+Tipo de acceso a Productos        | ALL (Table scan)  | ref (Index lookup)
+Filas leídas en Productos         | 100               | 50
+Cost del acceso a Productos       | 10.2              | 5.75
+Tiempo real total (actual time)   | ~4.25 ms          | ~4.04 ms
+Using temporary / Using filesort  | presentes         | presentes (sin cambio, esperado)
+ 
+ 
+============================================================
+4) CONCLUSIÓN
+============================================================
+El índice compuesto idx_productos_origen_id (origen, id_producto) resolvió
+el cuello de botella detectado: el Full Table Scan sobre Productos. Al
+indexar la columna de filtro junto con la columna usada en el join
+posterior, el optimizador redujo a la mitad las filas leídas y cambió el
+tipo de acceso de ALL a ref, garantizando un plan escalable a medida que
+la tabla de productos crezca. El índice idx_pedidos_fecha_numero no elimina
+el patrón de loops=285 sobre Pedidos (esa cardinalidad depende de
+detallePedidos, no de la falta de índice), pero deja preparado el terreno
+para otras variantes de consulta. Las operaciones de tabla temporal y
+ordenamiento permanecen sin cambios de forma esperada, ya que son
+inherentes al cálculo de un valor agregado usado en el ORDER BY, y no son
+corregibles mediante indexación en este caso.
+ 
